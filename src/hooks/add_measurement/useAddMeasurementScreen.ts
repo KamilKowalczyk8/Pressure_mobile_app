@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Alert } from 'react-native';
 import { addMeasurement } from '../../services/measurementService'; 
-import { MeasurementFormData } from '../../components/add_measurement/MeasurementForm';
+import { MeasurementFormData } from '../../types/forms';
 
 export const useAddMeasurementScreen = () => {
   const navigation = useNavigation();

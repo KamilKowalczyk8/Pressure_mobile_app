@@ -12,7 +12,7 @@ export const HistoryScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <View className="flex-row items-center justify-between px-4 mt-14 pb-4 pt-2 bg-background-paper border-b border-border-light">
+      <View className="flex-row items-center justify-between px-4 mt-8 pb-4 pt-2 bg-background-paper border-b border-border-light">
         <TouchableOpacity 
           onPress={handleGoBack}
           className="p-2 -ml-2 rounded-full active:bg-border-light"

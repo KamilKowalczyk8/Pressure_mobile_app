@@ -1,7 +1,5 @@
-// src/utils/validators/measurementValidator.ts
 import { FormErrors } from '../../hooks/add_measurement/useMeasurementForm';
 
-// Interfejs danych wejściowych (surowe dane z formularza)
 interface RawMeasurementData {
   systolic: string;
   diastolic: string;
@@ -9,31 +7,27 @@ interface RawMeasurementData {
   note: string;
 }
 
-// Wynik walidacji
 interface ValidationResult {
   isValid: boolean;
   errors: FormErrors;
 }
 
-// Helper: Wyrażenie regularne sprawdzające czy string to SAME cyfry
 const isNumeric = (val: string) => /^\d+$/.test(val);
 
 export const validateMeasurement = (data: RawMeasurementData): ValidationResult => {
   const errors: FormErrors = {};
   let isValid = true;
 
-  // --- Walidacja SKURCZOWE (Systolic) ---
   if (!data.systolic) {
     errors.systolic = "Wymagane";
     isValid = false;
   } else if (!isNumeric(data.systolic)) {
-    errors.systolic = "Tylko cyfry"; // Blokuje kropki, przecinki i litery
+    errors.systolic = "Tylko cyfry"; 
     isValid = false;
   } else if (data.systolic.length > 3) {
     errors.systolic = "Max 3 cyfry";
     isValid = false;
   } else {
-    // Dopiero gdy mamy pewność, że to cyfry, parsujemy
     const sys = parseInt(data.systolic, 10);
     if (sys < 50 || sys > 300) {
       errors.systolic = "Zakres 50-300";
@@ -41,7 +35,6 @@ export const validateMeasurement = (data: RawMeasurementData): ValidationResult 
     }
   }
 
-  // --- Walidacja ROZKURCZOWE (Diastolic) ---
   if (!data.diastolic) {
     errors.diastolic = "Wymagane";
     isValid = false;
@@ -59,7 +52,6 @@ export const validateMeasurement = (data: RawMeasurementData): ValidationResult 
     }
   }
 
-  // --- Walidacja PULS ---
   if (!data.pulse) {
     errors.pulse = "Wymagane";
     isValid = false;
@@ -77,7 +69,6 @@ export const validateMeasurement = (data: RawMeasurementData): ValidationResult 
     }
   }
 
-  // --- Walidacja NOTATKI ---
   if (data.note.length > 40) {
     errors.note = "Maksymalnie 40 znaków";
     isValid = false;

@@ -17,6 +17,7 @@ module.exports = {
         background: {
           DEFAULT: '#F9FAFB', // gray-50 (Tło całego ekranu)
           paper: '#FFFFFF',   // white (Karty, nagłówki)
+          backlight: '#F3F4F6',
         },
 
         // --- TEKSTY (Typography) ---
