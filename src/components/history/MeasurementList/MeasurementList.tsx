@@ -8,8 +8,9 @@ import { MeasurementCard } from './MeasurementCard';
 interface MeasurementListProps {
   selectedDate: Date;
   data: Measurement[]; 
+  onDelete: (id: number) => void;
 }
-export const MeasurementList = ({ selectedDate, data }: MeasurementListProps) => {
+export const MeasurementList = ({ selectedDate, data ,onDelete }: MeasurementListProps) => {
   const dailyMeasurements = useMemo(() => {
     const safeData = data || [];
     const sortedData = [...safeData].sort((a, b) => 
@@ -27,7 +28,7 @@ export const MeasurementList = ({ selectedDate, data }: MeasurementListProps) =>
         <FlatList
           data={dailyMeasurements}
           keyExtractor={(item) => item.id.toString()} 
-          renderItem={({ item }) => <MeasurementCard measurement={item} />}
+          renderItem={({ item }) => <MeasurementCard measurement={item}onDelete={onDelete} />}
           contentContainerStyle={{ paddingBottom: 20 }}
           showsVerticalScrollIndicator={false}
         />

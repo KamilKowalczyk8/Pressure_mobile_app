@@ -1,108 +1,55 @@
 import React from 'react';
-import { View, Text, ScrollView, Switch } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { 
-  Moon, Bell, Trash2, FileText, Shield, Database, Info, Share2 
-} from 'lucide-react-native';
+import { ArrowLeft, Bell } from 'lucide-react-native';  
+import DateTimePicker from '@react-native-community/datetimepicker'; 
 import { useSettings } from '../hooks/settings/useSettings';
-import { SettingsItem, SectionHeader, SectionContainer } from '../components/settings/SettingsScreen';
-
-const AppearanceSection = ({ isDarkMode, toggleTheme, onNavigateReminders }: any) => (
-  <>
-    <SectionHeader title="Wygląd i Powiadomienia" />
-    <SectionContainer>
-      <SettingsItem 
-        icon={Moon} title="Tryb Ciemny" subtitle="Oszczędzaj baterię i wzrok"
-        rightElement={
-          <Switch 
-            value={isDarkMode} onValueChange={toggleTheme}
-            trackColor={{ false: "#D1D5DB", true: "#3B82F6" }}
-          />
-        }
-      />
-      <SettingsItem 
-        icon={Bell} title="Konfiguracja Przypomnień" subtitle="Ustaw godziny pomiarów"
-        onPress={onNavigateReminders}
-      />
-    </SectionContainer>
-  </>
-);
-
-const ReportsSection = ({ onExportPDF, onExportCSV }: any) => (
-  <>
-    <SectionHeader title="Raporty dla Lekarza" />
-    <SectionContainer>
-      <SettingsItem 
-        icon={Share2} title="Wyślij Raport PDF" subtitle="Udostępnij historię pomiarów"
-        onPress={onExportPDF}
-      />
-      <SettingsItem 
-        icon={FileText} title="Eksportuj do CSV" subtitle="Surowe dane do Excela"
-        onPress={onExportCSV}
-      />
-    </SectionContainer>
-  </>
-);
-
-const SecuritySection = ({ onOpenSettings, onClearDb }: any) => (
-  <>
-    <SectionHeader title="Dane i Bezpieczeństwo" />
-    <SectionContainer>
-      <SettingsItem 
-        icon={Shield} title="Uprawnienia Systemowe" subtitle="Zarządzaj dostępem do kamery"
-        onPress={onOpenSettings}
-      />
-      <SettingsItem 
-        icon={Trash2} title="Wyczyść całą bazę" subtitle="Nieodwracalne usunięcie historii"
-        isDestructive={true} onPress={onClearDb}
-      />
-    </SectionContainer>
-  </>
-);
-
-const AboutSection = ({ version, dbStatus }: any) => (
-  <>
-    <SectionHeader title="O Aplikacji" />
-    <View className="border-t border-b border-border">
-       <SettingsItem 
-        icon={Info} title="Wersja" subtitle={version}
-        rightElement={<Text className="text-typography-secondary text-sm">v1.0.0</Text>}
-      />
-       <SettingsItem 
-        icon={Database} title="Baza danych" subtitle={`SQLite (${dbStatus})`}
-        rightElement={<Text className="text-typography-secondary text-sm">OK</Text>}
-      />
-    </View>
-  </>
-);
+import { ReportsSection } from '../components/settings/sections/ReportsSection';
+import { SecuritySection } from '../components/settings/sections/SecuritySection';
+import { AboutSection } from '../components/settings/sections/AboutSection';
+import { useAppHeader } from '../hooks/useAppHeader';
+import { SettingsItem, SectionHeader, SectionContainer } from '../components/settings/SettingsShared';
+import { ConfirmationModal } from '../components/ConfirmationModal';
+import { SupportSection } from '../components/settings/sections/SupportSection';
 
 export const SettingsScreen = () => {
   const { state, actions } = useSettings();
+  const { handleGoBack } = useAppHeader();
 
   return (
     <SafeAreaView className="flex-1 bg-background">
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-        
-        {/* Header Ekrano */}
-        <View className="px-6 py-6">
-          <Text className="text-3xl font-bold text-typography-main">Ustawienia</Text>
+
+        <View className="relative flex-row items-center justify-center py-4 bg-background-paper border-b border-border-light">
+           <TouchableOpacity 
+             onPress={handleGoBack}
+             className="absolute left-4 p-2 rounded-full active:bg-border-light z-10"
+           >
+             <ArrowLeft size={24} color="#111827" />
+           </TouchableOpacity>
+           <Text className="text-3xl font-bold text-typography-main">Ustawienia</Text>
         </View>
 
-        {/* 2. Wyświetlamy sekcje przekazując im dane z Hooka */}
-        <AppearanceSection 
-            isDarkMode={state.isDarkMode} 
-            toggleTheme={actions.setIsDarkMode}
-            onNavigateReminders={actions.navigateToReminders}
-        />
+        <SectionHeader title="Powiadomienia" />
+        <SectionContainer>
+            <SettingsItem 
+                icon={Bell} 
+                title="Konfiguracja Przypomnień" 
+                subtitle="Ustaw godzinę codziennego pomiaru"
+                onPress={actions.reminders.openPicker} 
+            />
+        </SectionContainer>
 
         <ReportsSection 
             onExportPDF={actions.handleExportPDF}
-            onExportCSV={actions.handleExportCSV}
+        />
+        <SupportSection 
+            onPrivacyPolicy={actions.handlePrivacyPolicy}
         />
 
         <SecuritySection 
             onOpenSettings={actions.openSystemSettings}
-            onClearDb={actions.handleClearDatabase}
+            onClearDb={actions.openDeleteModal}
         />
 
         <AboutSection 
@@ -110,17 +57,35 @@ export const SettingsScreen = () => {
             dbStatus={state.dbStatus}
         />
 
-        {/* Footer */}
         <View className="p-6 items-center gap-1">
              <Text className="text-typography-secondary text-xs text-center font-bold">
                  PressureApp &copy; 2026
              </Text>
-             <Text className="text-typography-secondary text-[10px] text-center">
-                 Dbaj o swoje serce każdego dnia ❤️
-             </Text>
         </View>
 
       </ScrollView>
+
+      {state.reminderPicker.showPicker && (
+        <DateTimePicker
+          testID="dateTimePicker"
+          value={state.reminderPicker.date}
+          mode="time"
+          is24Hour={true}
+          display="spinner"
+          onChange={actions.reminders.handleTimeChange}
+        />
+      )}
+
+      <ConfirmationModal
+          visible={state.isDeleteModalVisible}
+          onClose={actions.closeDeleteModal}
+          onConfirm={actions.confirmClearDatabase}
+          title="Usuwanie historii"
+          message="Czy na pewno chcesz usunąć WSZYSTKIE pomiary? Tej operacji nie można cofnąć."
+          confirmText="Usuń wszystko"
+          isDestructive={true}
+       />
+
     </SafeAreaView>
   );
 };

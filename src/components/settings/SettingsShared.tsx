@@ -9,8 +9,10 @@ export interface SettingsItemProps {
   onPress?: () => void;
   isDestructive?: boolean;
   rightElement?: React.ReactNode;
+  isLast?: boolean;
 }
-export const SettingsItem = ({ icon: Icon, title, subtitle, onPress, isDestructive, rightElement }: SettingsItemProps) => (
+
+export const SettingsItem = ({ icon: Icon, title, subtitle, onPress, isLast = false, isDestructive, rightElement }: SettingsItemProps) => (
   <TouchableOpacity 
     onPress={onPress}
     disabled={!onPress}

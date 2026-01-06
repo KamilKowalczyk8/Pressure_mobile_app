@@ -5,12 +5,10 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import { Settings, Plus, Activity, Heart, History } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useAppHeader } from '../hooks/useAppHeader';
 
 export const HomeScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { handleGoToSettings } = useAppHeader();
-
+  
   return (
     <SafeAreaView className="flex-1 bg-background">
       <StatusBar barStyle="dark-content" backgroundColor="#F9FAFB" />

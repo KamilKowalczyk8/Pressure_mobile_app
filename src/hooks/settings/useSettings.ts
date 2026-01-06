@@ -1,55 +1,97 @@
-import { useState } from 'react';
 import { Alert, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import Toast from 'react-native-toast-message'; 
+import { usePdfReport } from '../reports/usePdfReport';
+import { clearDatabase } from '../../services/measurementService';
+import { useReminders } from './useReminders';
+import { useState } from 'react';
 
 export const useSettings = () => {
   const navigation = useNavigation();
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { generateAndSharePdf, isGenerating } = usePdfReport();
+  const { reminderState, reminderActions } = useReminders(); 
+  const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
 
-  // Logika usuwania bazy
-  const handleClearDatabase = () => {
-    Alert.alert(
-      "Usuwanie danych",
-      "Czy na pewno chcesz usunąć WSZYSTKIE pomiary? Tej operacji nie można cofnąć.",
-      [
-        { text: "Anuluj", style: "cancel" },
-        { 
-          text: "Usuń wszystko", 
-          style: "destructive", 
-          onPress: () => console.log("DELETE * FROM measurements") 
-        }
-      ]
-    );
+  const openDeleteModal = () => {
+    setDeleteModalVisible(true);
   };
 
-  // Logika ustawień systemowych
-  const openSystemSettings = () => {
-    Linking.openSettings();
+  const closeDeleteModal = () => {
+    setDeleteModalVisible(false);
   };
 
-  // Placeholder na przyszłe funkcje
-  const handleExportPDF = () => Alert.alert("Eksport", "Generowanie PDF w przygotowaniu...");
-  const handleExportCSV = () => Alert.alert("Eksport", "Generowanie CSV w przygotowaniu...");
-  
-  // Nawigacja
-  const navigateToReminders = () => {
-      Alert.alert("Nawigacja", "Tu otworzymy ekran ReminderSettings");
-      // navigation.navigate('ReminderSettings');
+  const confirmClearDatabase = async () => {
+    setDeleteModalVisible(false);
+    
+    const result = await clearDatabase();
+    
+    if (result.success) {
+      Toast.show({
+        type: 'success', 
+        text1: 'Baza wyczyszczona 🗑️',
+        text2: 'Wszystkie pomiary zostały trwale usunięte.',
+        topOffset: 60,
+      });
+    } else {
+      Toast.show({
+        type: 'error', 
+        text1: 'Błąd',
+        text2: 'Nie udało się wyczyścić bazy danych.',
+        topOffset: 60
+      });
+    }
   };
+
+  const handlePrivacyPolicy = async () => {
+    const url = 'https://sites.google.com/view/pressureapp-privacy'; 
+    try {
+      const canOpen = await Linking.canOpenURL(url);
+      if (canOpen) {
+        await Linking.openURL(url);
+      } else {
+        throw new Error("Cannot open URL");
+      }
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Błąd',
+        text2: 'Nie udało się otworzyć strony z polityką.',
+        topOffset: 60
+      });
+    }
+  };
+
+  const openSystemSettings = async () => {
+    try {
+      await Linking.openSettings();
+    } catch (error) {
+      console.error(error);
+      Toast.show({
+        type: 'error',
+        text1: 'Błąd',
+        text2: 'Nie udało się otworzyć ustawień systemowych.'
+      });
+    }
+  };
+
+  const handleExportPDF = async () => await generateAndSharePdf();
 
   return {
     state: {
-      isDarkMode,
-      appVersion: "1.0.0 (Beta)",
-      dbStatus: "Online"
+      appVersion: "1.4.0",
+      dbStatus: "Lokalna",
+      isProcessing: isGenerating,
+      reminderPicker: reminderState,
+      isDeleteModalVisible
     },
     actions: {
-      setIsDarkMode,
-      handleClearDatabase,
+      handlePrivacyPolicy,
+      openDeleteModal,      
+      closeDeleteModal,    
+      confirmClearDatabase,
       openSystemSettings,
       handleExportPDF,
-      handleExportCSV,
-      navigateToReminders
+      reminders: reminderActions
     }
   };
 };

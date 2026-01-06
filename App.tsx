@@ -1,25 +1,32 @@
 import React from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import { StatusBar } from 'expo-status-bar'; 
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { useAppInitalization } from './src/hooks/useAppInitialization'; 
+import Toast from 'react-native-toast-message'; 
+import { AuthProvider } from './src/context/AuthContext';
+import { BiometricLockScreen } from './src/components/BiometricLockScreen';
 
 export default function App() {
   const { isReady } = useAppInitalization();
 
   if (!isReady) {
-    return(
-      <View className="flex-1 justify-center items-center bg-blue-600">
-        <Text className="text-white text-3xl font-bold mb-4">Ciśnieniomierz ❤️</Text>
-        <ActivityIndicator size="large" color="#ffffff" />
-        <Text className="text-white/80 mt-2 text-sm">Przygotowywanie bazy danych...</Text>
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
+        <ActivityIndicator size="large" color="#2563EB" />
       </View>
     );
   }
 
   return (
-    <NavigationContainer>
-      <AppNavigator/>
-    </NavigationContainer>
+      <AuthProvider>
+        <NavigationContainer>
+          <StatusBar/>
+          <AppNavigator/>
+          <BiometricLockScreen />
+          <Toast />
+        </NavigationContainer>
+      </AuthProvider>
   )
 }

@@ -5,10 +5,15 @@ import { DateSlider } from '../components/history/DateSlider/DateSlider';
 import { MeasurementList } from '../components/history/MeasurementList/MeasurementList';
 import { useAppHeader } from '../hooks/useAppHeader';
 import { useHistoryScreen } from '../hooks/history/useHistoryScreen';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../types/navigation';
 
 export const HistoryScreen = () => {
-  const { handleGoBack, handleGoToSettings } = useAppHeader();
-  const { selectedDate, measurements, handleDateChange } = useHistoryScreen();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  
+  const { handleGoBack } = useAppHeader();
+  const { selectedDate, measurements, handleDateChange, handleDelete } = useHistoryScreen();
 
   return (
     <SafeAreaView className="flex-1 bg-background">
@@ -22,12 +27,13 @@ export const HistoryScreen = () => {
         <Text className="text-xl font-bold text-typography-main">
           Historia
         </Text>
-        <TouchableOpacity 
-          onPress={handleGoToSettings}
-          className="p-2 -mr-2 rounded-full active:bg-border-light"
-        >
-          <Settings size={24} color="#111827" />
-        </TouchableOpacity>
+         <TouchableOpacity
+            onPress={() => navigation.navigate('Settings')} 
+            className="bg-background-paper p-3 rounded-full border border-border shadow-sm active:bg-border-light"
+            >
+            <Settings
+            size={24} color="#111827" strokeWidth={2} />
+         </TouchableOpacity>
       </View>
       <View className="mt-2">
         <DateSlider
@@ -39,6 +45,7 @@ export const HistoryScreen = () => {
       <MeasurementList 
         selectedDate={selectedDate} 
         data={measurements} 
+        onDelete={handleDelete}
       />
     </SafeAreaView>
   );

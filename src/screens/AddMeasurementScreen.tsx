@@ -4,9 +4,14 @@ import { ArrowLeft, Settings } from 'lucide-react-native';
 import { MeasurementForm } from '../../src/components/add_measurement/MeasurementForm';
 import { useAddMeasurementScreen } from '../../src/hooks/add_measurement/useAddMeasurementScreen';
 import { useAppHeader } from '../hooks/useAppHeader';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../types/navigation';
 
 export const AddMeasurementScreen = () => {
-  const { handleGoBack, handleGoToSettings } = useAppHeader();
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  
+  const { handleGoBack } = useAppHeader();
   const { 
     isSaving, 
     handleFormSubmit 
@@ -25,11 +30,12 @@ export const AddMeasurementScreen = () => {
         <Text className="text-xl font-bold text-typography-main">
           Dodaj pomiar
         </Text>
-        <TouchableOpacity 
-          onPress={handleGoToSettings}
-          className="p-2 -mr-2 rounded-full active:bg-border-light"
-        >
-          <Settings size={24} color="#111827" />
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Settings')} 
+          className="bg-background-paper p-3 rounded-full border border-border shadow-sm active:bg-border-light"
+          >
+          <Settings
+          size={24} color="#111827" strokeWidth={2} />
         </TouchableOpacity>
       </View>
       <KeyboardAvoidingView 

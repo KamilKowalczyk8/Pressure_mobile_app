@@ -27,7 +27,7 @@ export const MeasurementScanner = ({ onScanComplete, disabled }: MeasurementScan
         onPress={handlePress}
         disabled={isDisabled}
         className={`
-          flex-row items-center justify-center rounded-xl p-4 gap-2 border-2 border-dashed
+          flex-row items-center justify-center rounded-xl p-6 border-2 border-dashed
           ${isScanning 
               ? 'bg-gray-50 border-gray-300' 
               : 'bg-background-paper border-primary active:bg-blue-50'

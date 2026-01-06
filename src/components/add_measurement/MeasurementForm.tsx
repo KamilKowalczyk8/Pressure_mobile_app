@@ -31,7 +31,7 @@ export const MeasurementForm = ({ onSubmit, isSaving }: MeasurementFormProps) =>
 
   return (
     <ScrollView 
-      className="flex-1 px-4 pt-6" 
+      className="flex-1 px-4 pt-2" 
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
     > 

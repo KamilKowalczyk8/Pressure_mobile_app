@@ -1,58 +1,75 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { format } from 'date-fns';
-import { Heart, Clock, StickyNote } from 'lucide-react-native'; 
+import { Heart, Clock, StickyNote, Trash2 } from 'lucide-react-native'; 
 import { Measurement } from '../../../models/Measurement';
 
 interface MeasurementCardProps {
   measurement: Measurement;
+  onDelete: (id: number) => void;
 }
-export const MeasurementCard = ({ measurement }: MeasurementCardProps) => {
+export const MeasurementCard = ({ measurement, onDelete }: MeasurementCardProps) => {
   const { systolic, diastolic, pulse, createdAt, timeOfDay, note } = measurement;
   const dateObject = new Date(createdAt);
   const timeString = format(dateObject, 'HH:mm');
 
   return (
-    <View className="bg-background-paper p-4 rounded-2xl shadow-sm border border-border-light mb-3 mx-4">
-      <View className="flex-row justify-between items-center mb-3">
-        <View className="flex-row items-center gap-1.5">
-          <Clock size={14} color="#9CA3AF" />
-          <Text className="text-typography-secondary text-xs font-medium">
+    <View className="bg-background-paper px-5 py-4 pb-6 rounded-3xl shadow-md border border-border-light mb-4 mx-4">
+      
+      <View className="flex-row justify-between items-center mb-4">
+        <View className="flex-row items-center gap-2">
+          <Clock size={14} color="#6B7280" />
+          <Text className="text-typography-secondary text-sm font-medium">
             {timeString}
           </Text>
+
+          <View className="bg-border-light px-2 py-0.5 rounded-md ml-2">
+            <Text className="text-[10px] font-semibold uppercase tracking-wider text-typography-secondary">
+              {timeOfDay}
+            </Text>
+          </View>
         </View>
-        
-        <View className="bg-border-light px-2 py-0.5 rounded-md">
-          <Text className="text-typography-secondary text-[10px] font-bold uppercase tracking-wider">
-            {timeOfDay}
+
+        <TouchableOpacity
+          onPress={() => onDelete(measurement.id)}
+          className="p-2 rounded-full active:bg-danger-bg"
+          hitSlop={10}
+        >
+          <Trash2 size={18} color="#DC2626" />
+        </TouchableOpacity>
+      </View>
+      <View className="flex-row justify-between items-end">
+        <View className="flex-row items-baseline">
+          <Text className="text-4xl font-bold text-typography-main">
+            {systolic}
+          </Text>
+          <Text className="text-2xl text-typography-secondary mx-1">/</Text>
+          <Text className="text-4xl font-bold text-typography-main">
+            {diastolic}
+          </Text>
+          <Text className="text-sm text-typography-secondary ml-2 mb-1">
+            mmHg
+          </Text>
+        </View>
+
+        <View className="flex-row items-center justify-center gap-2 bg-danger-bg px-4 pl-2  py-1 pb-3 rounded-xl">
+          <Heart size={18} color="#DC2626" fill="#DC2626" />
+          <Text className="text-danger-text font-bold text-lg">
+            {pulse}
+          </Text>
+          <Text className="text-danger text-xs font-medium">
+            BPM
           </Text>
         </View>
       </View>
-
-      <View className="flex-row items-end justify-between">
-        <View className="flex-row items-baseline">
-          <Text className="text-3xl font-bold text-typography-main">{systolic}</Text>
-          <Text className="text-xl text-typography-secondary font-medium mx-1">/</Text>
-          <Text className="text-3xl font-bold text-typography-main">{diastolic}</Text>
-          <Text className="text-xs text-typography-secondary ml-1 mb-1 font-medium">mmHg</Text>
-        </View>
-
-        <View className="flex-row items-center gap-1.5 bg-danger-bg px-3 py-1.5 rounded-lg">
-          <Heart size={16} color="#EF4444" fill="#EF4444" />
-          <Text className="text-danger-text font-bold text-base">{pulse}</Text>
-          <Text className="text-danger text-[10px] font-medium">BPM</Text>
-        </View>
-      </View>
-
       {note && (
-        <View className="mt-3 pt-2 flex-row items-center gap-2">
-          <StickyNote size={12} color="#2563EB" />
-          <Text className="text-typography-secondary text-xs italic truncate" numberOfLines={1}>
+        <View className="mt-4 pt-3 border-t border-border-light flex-row items-start gap-2">
+          <StickyNote size={14} color="#2563EB" />
+          <Text className="text-typography-secondary text-sm italic flex-1">
             {note}
           </Text>
         </View>
       )}
-
     </View>
   );
 };

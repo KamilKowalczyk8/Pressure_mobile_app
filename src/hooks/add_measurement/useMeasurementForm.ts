@@ -3,6 +3,7 @@ import { TimeOfDay } from '../../types/domain';
 import { validateMeasurement } from '../../utils/validators/measurementValidator'; 
 import { MeasurementFormData } from '../../types/forms';
 import { ScannedMeasurement } from '../../services/ocrService';
+import Toast from 'react-native-toast-message';
 
 export type FormErrors = {
   systolic?: string;
@@ -49,7 +50,13 @@ export const useMeasurementForm = (onSubmit: (data: MeasurementFormData) => void
 
     setErrors(validationResult.errors);
     if (!validationResult.isValid) {
-      return;
+      Toast.show({
+        type: 'error', 
+        text1: 'Błąd walidacji',
+        text2: 'Popraw zaznaczone pola przed zapisem.',
+        topOffset: 60,
+      });
+      return; 
     }
     
     onSubmit({

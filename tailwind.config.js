@@ -8,7 +8,6 @@ module.exports = {
         primary: {
           DEFAULT: '#2563EB', // blue-600 (Główny przycisk, aktywny element)
           light: '#3B82F6',   // blue-500
-          dark: '#1D4ED8',    // blue-700 (Stan hover/active)
           bg: '#EFF6FF',      // blue-50 (Tło kafelka "Dziś")
           text: '#1E40AF',    // blue-800 (Tekst na jasnym tle)
         },
