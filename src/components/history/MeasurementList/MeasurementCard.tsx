@@ -52,7 +52,7 @@ export const MeasurementCard = ({ measurement, onDelete }: MeasurementCardProps)
           </Text>
         </View>
 
-        <View className="flex-row items-center justify-center gap-2 bg-danger-bg px-4 pl-2  py-1 pb-3 rounded-xl">
+        <View className="flex-row items-center justify-center gap-2 bg-danger-bg px-4 pl-2 py-1 pb-3 rounded-xl">
           <Heart size={18} color="#DC2626" fill="#DC2626" />
           <Text className="text-danger-text font-bold text-lg">
             {pulse}
