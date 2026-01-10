@@ -5,9 +5,11 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import { Settings, Plus, Activity, Heart, History } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 export const HomeScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { t } = useTranslation();
   
   return (
     <SafeAreaView className="flex-1 bg-background">
@@ -18,13 +20,13 @@ export const HomeScreen = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
       >
-                <View className="flex-row justify-between items-center mb-8">
+        <View className="flex-row justify-between items-center mb-8">
           <View>
             <Text className="text-typography-secondary text-xs font-bold uppercase tracking-widest mb-1">
-              Witaj w aplikacji
+              {t('welcome')}
             </Text>
             <Text className="text-typography-main text-3xl font-bold">
-              Twoje Serce ❤️
+              {t('heart')} ❤️
             </Text>
           </View>
           
@@ -47,17 +49,17 @@ export const HomeScreen = () => {
                 </View>
                 <View className="flex-1">
                     <Text className="text-white text-lg font-bold">
-                        Zadbaj o zdrowie
+                        {t('take_care_of_your_health')}
                     </Text>
                     <Text className="text-blue-100 text-sm mt-1 leading-5">
-                        Regularne pomiary pomagają wcześnie wykryć nadciśnienie.
+                        {t('take_care_of_your_health_text')}
                     </Text>
                 </View>
             </View>
         </View>
 
         <Text className="text-typography-main text-lg font-bold mb-4 ml-1">
-            Dostępne akcje
+            {t('available_actions')}
         </Text>
 
         <View className="flex gap-4 items-center justify-center">
@@ -71,10 +73,10 @@ export const HomeScreen = () => {
                 
                 <View className="flex-1">
                     <Text className="text-typography-main text-lg font-bold">
-                        Nowy Pomiar
+                        {t('home_add')}
                     </Text>
                     <Text className="text-typography-secondary text-xs mt-0.5">
-                        Zeskanuj kamerą lub wpisz ręcznie
+                        {t('home_add_text')}
                     </Text>
                 </View>
             </TouchableOpacity>
@@ -89,10 +91,10 @@ export const HomeScreen = () => {
 
                 <View className="flex-1">
                     <Text className="text-typography-main text-lg font-bold">
-                        Historia Wyników
+                        {t('home_history')}
                     </Text>
                     <Text className="text-typography-secondary text-xs mt-0.5">
-                        Sprawdź swoje statystyki i wykresy
+                        {t('home_history_text')}
                     </Text>
                 </View>
             </TouchableOpacity>

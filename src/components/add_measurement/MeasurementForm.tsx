@@ -4,6 +4,7 @@ import { TIME_OF_DAY_OPTIONS } from '../../types/domain';
 import { MeasurementFormData } from '../../types/forms';
 import { useMeasurementForm } from '../../hooks/add_measurement/useMeasurementForm'; 
 import { MeasurementScanner } from './MeasurementScanner';
+import { useTranslation } from 'react-i18next';
 
 interface MeasurementFormProps {
   onSubmit: (data: MeasurementFormData) => void;
@@ -12,6 +13,14 @@ interface MeasurementFormProps {
 
 export const MeasurementForm = ({ onSubmit, isSaving }: MeasurementFormProps) => {
   const { formState, errors, setters, submit } = useMeasurementForm(onSubmit);
+  const { t } = useTranslation();
+
+  const timeOfDayLabels: Record<string, string> = {
+    'Rano': t('time_of_day_morning'),
+    'Popołudnie': t('time_of_day_afternoon'),
+    'Wieczór': t('time_of_day_evening'),
+  };
+
   const renderLabel = (text: string) => (
     <View className="h-8 justify-end mb-2">
       <Text className="text-typography-secondary text-[10px] font-bold uppercase text-center" numberOfLines={1}>
@@ -37,7 +46,7 @@ export const MeasurementForm = ({ onSubmit, isSaving }: MeasurementFormProps) =>
     > 
       <View className="flex-row gap-4 mb-6">
         <View className="flex-1">
-          {renderLabel("Skurczowe (SYS)")}
+          {renderLabel(`${t('systolic')} (SYS)`)}
           <TextInput
             value={formState.systolic}
             onChangeText={setters.setSystolic}
@@ -53,7 +62,7 @@ export const MeasurementForm = ({ onSubmit, isSaving }: MeasurementFormProps) =>
         </View>
 
         <View className="flex-1">
-          {renderLabel("Rozkurczowe (DIA)")}
+          {renderLabel(`${t('diastolic')} (DIA)`)}
           <TextInput
             value={formState.diastolic}
             onChangeText={setters.setDiastolic}
@@ -69,7 +78,7 @@ export const MeasurementForm = ({ onSubmit, isSaving }: MeasurementFormProps) =>
         </View>
 
         <View className="flex-1">
-          {renderLabel("Puls (BPM)")}
+          {renderLabel(`${t('pulse')} (BPM)`)}
           <TextInput
             value={formState.pulse}
             onChangeText={setters.setPulse}
@@ -86,7 +95,7 @@ export const MeasurementForm = ({ onSubmit, isSaving }: MeasurementFormProps) =>
       </View>
 
       <View className="mb-6">
-        <Text className="text-typography-secondary text-xs font-bold uppercase mb-2 ml-1">Pora dnia</Text>
+        <Text className="text-typography-secondary text-xs font-bold uppercase mb-2 ml-1">{t('time_of_day')}</Text>
         <View className="flex-row bg-background-paper p-1 rounded-xl border border-border shadow-sm">
           {TIME_OF_DAY_OPTIONS.map((option) => {
             const isSelected = formState.timeOfDay === option;
@@ -97,7 +106,7 @@ export const MeasurementForm = ({ onSubmit, isSaving }: MeasurementFormProps) =>
                 className={`flex-1 py-3 rounded-lg items-center ${isSelected ? 'bg-primary shadow-sm' : 'bg-transparent'}`}
               >
                 <Text className={`font-medium text-sm ${isSelected ? 'text-white font-bold' : 'text-typography-secondary'}`}>
-                  {option}
+                  {timeOfDayLabels[option]}
                 </Text>
               </TouchableOpacity>
             );
@@ -107,7 +116,7 @@ export const MeasurementForm = ({ onSubmit, isSaving }: MeasurementFormProps) =>
 
       <View className="mb-6">
         <View className="flex-row justify-between items-end mb-2 ml-1 mr-1">
-            <Text className="text-typography-secondary text-xs font-bold uppercase">Notatka (Opcjonalne)</Text>
+            <Text className="text-typography-secondary text-xs font-bold uppercase">{t('add_note')}</Text>
             <Text className={`text-[10px] font-medium ${formState.note.length === 40 ? 'text-danger' : 'text-typography-disabled'}`}>
               {formState.note.length}/40
             </Text>
@@ -115,7 +124,7 @@ export const MeasurementForm = ({ onSubmit, isSaving }: MeasurementFormProps) =>
         <TextInput
           value={formState.note}
           onChangeText={setters.setNote}
-          placeholder="Np. po kawie, stres, lekach..."
+          placeholder={t('add_note_sugestion')}
           multiline
           numberOfLines={3}
           maxLength={40}
@@ -141,7 +150,7 @@ export const MeasurementForm = ({ onSubmit, isSaving }: MeasurementFormProps) =>
         `}
       >
         <Text className="text-white font-bold text-lg uppercase tracking-wide">
-          {isSaving ? 'Zapisywanie...' : 'Zapisz Wynik'}
+          {isSaving ? t('saving') : t('save_result')}
         </Text>
       </TouchableOpacity>
 

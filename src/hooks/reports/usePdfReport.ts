@@ -3,13 +3,14 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import Toast from 'react-native-toast-message'; 
 import { format } from 'date-fns'; 
-import { pl } from 'date-fns/locale';
-
+import { pl, enUS } from 'date-fns/locale';
+import { useTranslation } from 'react-i18next';
 import { getAllMeasurements } from '../../services/measurementService'; 
-import { generateReportHtml } from '../../services/htmlGenerator';
+import { generateReportHtml, ReportLabels } from '../../services/htmlGenerator';
 
 export const usePdfReport = () => {
   const [isGenerating, setIsGenerating] = useState(false);
+  const { t, i18n } = useTranslation();
 
   const generateAndSharePdf = async () => {
     try {
@@ -20,22 +21,41 @@ export const usePdfReport = () => {
       if (dbData.length === 0) {
         Toast.show({
           type: 'error',
-          text1: 'Pusty raport',
-          text2: 'Brak pomiarów do wysłania. Dodaj najpierw wynik.',
+          text1: t('pdf.empty_title'),
+          text2: t('pdf.empty_msg'),
           topOffset: 60,
         });
         return;
       }
 
-      const reportData = dbData.map(item => ({
-        id: item.id,
-        systolic: item.systolic,
-        diastolic: item.diastolic,
-        pulse: item.pulse,
-        createdAt: format(new Date(item.createdAt), 'dd.MM.yyyy HH:mm', { locale: pl })
-      }));
+      const isEnglish = i18n.language.startsWith('en');
+      const currentLocale = isEnglish ? enUS : pl;
+      
+      const dateFormat = isEnglish ? 'MM/dd/yyyy' : 'dd.MM.yyyy';
+      const timeFormat = isEnglish ? 'h:mm aa' : 'HH:mm';
 
-      const html = generateReportHtml(reportData);
+      const reportData = dbData.map(item => {
+        const dateObj = new Date(item.createdAt);
+        return {
+          id: item.id,
+          systolic: item.systolic,
+          diastolic: item.diastolic,
+          pulse: item.pulse,
+          date: format(dateObj, dateFormat, { locale: currentLocale }),
+          time: format(dateObj, timeFormat, { locale: currentLocale })
+        };
+      });
+
+      const labels: ReportLabels = {
+        title: t('pdf.pdf_report_title'),
+        generatedBy: t('pdf.pdf_generated_by'),
+        headerTime: t('pdf.pdf_header_time'),
+        headerPressure: t('pdf.pdf_header_pressure'),
+        headerPulse: t('pdf.pdf_header_pulse'),
+        footer: t('pdf.pdf_footer')
+      };
+
+      const html = generateReportHtml(reportData, labels);
 
       const { uri } = await Print.printToFileAsync({
         html: html,
@@ -46,14 +66,14 @@ export const usePdfReport = () => {
         await Sharing.shareAsync(uri, { 
             UTI: '.pdf', 
             mimeType: 'application/pdf',
-            dialogTitle: 'Udostępnij raport ciśnienia'
+            dialogTitle: t('pdf.share_title')
         });
                 
       } else {
         Toast.show({
           type: 'error',
-          text1: 'Błąd',
-          text2: 'Udostępnianie nie jest dostępne na tym urządzeniu.',
+          text1: t('errors.general_title'),
+          text2: t('pdf.share_not_available'),
           topOffset: 60,
         });
       }
@@ -63,8 +83,8 @@ export const usePdfReport = () => {
       
       Toast.show({
         type: 'error',
-        text1: 'Błąd generowania',
-        text2: 'Nie udało się stworzyć pliku PDF.',
+        text1: t('pdf.generate_error_title'),
+        text2: t('pdf.generate_error_msg'),
         topOffset: 60,
       });
     } finally {

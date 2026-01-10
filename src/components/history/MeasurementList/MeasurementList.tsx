@@ -1,48 +1,49 @@
-import React, { useMemo } from 'react';
-import { View, Text, FlatList } from 'react-native';
+import React from 'react';
+import { View, Text, FlatList, Image } from 'react-native';
 import { isSameDay } from 'date-fns';
-import { ClipboardList } from 'lucide-react-native';
 import { Measurement } from '../../../models/Measurement';
-import { MeasurementCard } from './MeasurementCard';
+import { MeasurementCard } from './MeasurementCard'; 
+import { useTranslation } from 'react-i18next';
 
 interface MeasurementListProps {
+  data: Measurement[];
   selectedDate: Date;
-  data: Measurement[]; 
   onDelete: (id: number) => void;
 }
-export const MeasurementList = ({ selectedDate, data ,onDelete }: MeasurementListProps) => {
-  const dailyMeasurements = useMemo(() => {
-    const safeData = data || [];
-    const sortedData = [...safeData].sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
 
-    return sortedData.filter(m => {
-      return isSameDay(new Date(m.createdAt), selectedDate);
-    });
-  }, [selectedDate, data]); 
+export const MeasurementList = ({ data, selectedDate, onDelete }: MeasurementListProps) => {
+  const { t } = useTranslation();
+
+  const filteredData = data.filter((item) => 
+    isSameDay(new Date(item.createdAt), selectedDate)
+  );
+
+  const sortedData = filteredData.sort((a, b) => 
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+
+  if (sortedData.length === 0) {
+    return (
+      <View className="flex-1 items-center justify-center mt-20 opacity-50">
+        <Text className="text-typography-secondary text-lg font-medium mt-4">
+           {t('history_text')}
+        </Text>
+      </View>
+    );
+  }
 
   return (
-    <View className="flex-1 mt-4">
-      {dailyMeasurements.length > 0 ? (
-        <FlatList
-          data={dailyMeasurements}
-          keyExtractor={(item) => item.id.toString()} 
-          renderItem={({ item }) => <MeasurementCard measurement={item}onDelete={onDelete} />}
-          contentContainerStyle={{ paddingBottom: 20 }}
-          showsVerticalScrollIndicator={false}
+    <FlatList
+      data={sortedData}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={({ item }) => (
+        <MeasurementCard 
+          measurement={item} 
+          onDelete={onDelete} 
         />
-      ) : (
-        <View className="items-center justify-center mt-10 opacity-60">
-          <View className="bg-border-light p-4 rounded-full mb-3">
-            <ClipboardList size={32} color="#6B7280" />
-          </View>
-          
-          <Text className="text-typography-secondary font-medium text-base">
-            Brak pomiarów dla tego dnia
-          </Text>
-        </View>
       )}
-    </View>
+      contentContainerStyle={{ paddingBottom: 100, paddingTop: 16 }}
+      showsVerticalScrollIndicator={false}
+    />
   );
 };

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TouchableOpacity, Text, View, Platform } from 'react-native';
 import { Calendar as CalendarIcon } from 'lucide-react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { useTranslation } from 'react-i18next';
 
 interface DatePickerButtonProps {
   currentDate: Date;
@@ -10,6 +11,8 @@ interface DatePickerButtonProps {
 
 export const DatePickerButton = ({ currentDate, onDateSelect }: DatePickerButtonProps) => {
   const [showPicker, setShowPicker] = useState(false);
+  const { t } = useTranslation();
+
   const handleChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
     if (Platform.OS === 'android') setShowPicker(false);
     if (event.type === 'set' && selectedDate) {
@@ -30,7 +33,7 @@ export const DatePickerButton = ({ currentDate, onDateSelect }: DatePickerButton
           style={{ includeFontPadding: false, textAlignVertical: 'center' }}
           className="text-typography-secondary font-medium text-sm"
         >
-          Wybierz datę
+          {t('choose_date')}
         </Text>
       </TouchableOpacity>
 

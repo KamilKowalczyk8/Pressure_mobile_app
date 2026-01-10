@@ -1,17 +1,29 @@
 import React, { memo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { format, isToday } from 'date-fns';
-import { pl } from 'date-fns/locale'; 
+import { pl, enUS } from 'date-fns/locale'; 
+import { useTranslation } from 'react-i18next';
 
 interface DateTileProps {
   date: Date;
   isSelected: boolean;
   onPress: () => void;
 }
+
+const locales: { [key: string]: any } = {
+  pl: pl,
+  en: enUS,
+};
+
 export const DateTile = memo(({ date, isSelected, onPress }: DateTileProps) => {
-  const dayName = format(date, 'EEE', { locale: pl });
+  const { i18n } = useTranslation();
+
+  const currentLocale = locales[i18n.language] || enUS;
+
+  const dayName = format(date, 'EEE', { locale: currentLocale });
   const dayNumber = format(date, 'd');
-  const monthName = format(date, 'MMM', { locale: pl });
+  const monthName = format(date, 'MMM', { locale: currentLocale });
+  
   const isCurrentDay = isToday(date);
 
   const getContainerStyle = () => {

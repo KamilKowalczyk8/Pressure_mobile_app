@@ -7,6 +7,7 @@ import { useAppHeader } from '../hooks/useAppHeader';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
+import { useTranslation } from 'react-i18next';
 
 export const AddMeasurementScreen = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -16,6 +17,7 @@ export const AddMeasurementScreen = () => {
     isSaving, 
     handleFormSubmit 
   } = useAddMeasurementScreen();
+  const { t } = useTranslation();
 
   return (
     <SafeAreaView className="flex-1 bg-background">
@@ -27,9 +29,11 @@ export const AddMeasurementScreen = () => {
         >
           <ArrowLeft size={24} color="#111827" />
         </TouchableOpacity>
+        
         <Text className="text-xl font-bold text-typography-main">
-          Dodaj pomiar
+          {t('add_measurement')}
         </Text>
+        
         <TouchableOpacity
           onPress={() => navigation.navigate('Settings')} 
           className="bg-background-paper p-3 rounded-full border border-border shadow-sm active:bg-border-light"

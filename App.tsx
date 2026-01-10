@@ -1,10 +1,12 @@
+import './src/language/index';
 import React from 'react';
-import { View, Text, ActivityIndicator } from 'react-native';
-import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
-import { StatusBar } from 'expo-status-bar'; 
+import { View, ActivityIndicator } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { StatusBar } from 'expo-status-bar';
+import Toast from 'react-native-toast-message';
+
 import { AppNavigator } from './src/navigation/AppNavigator';
-import { useAppInitalization } from './src/hooks/useAppInitialization'; 
-import Toast from 'react-native-toast-message'; 
+import { useAppInitalization } from './src/hooks/useAppInitialization';
 import { AuthProvider } from './src/context/AuthContext';
 import { BiometricLockScreen } from './src/components/BiometricLockScreen';
 
@@ -20,13 +22,13 @@ export default function App() {
   }
 
   return (
-      <AuthProvider>
-        <NavigationContainer>
-          <StatusBar/>
-          <AppNavigator/>
-          <BiometricLockScreen />
-          <Toast />
-        </NavigationContainer>
-      </AuthProvider>
-  )
+    <AuthProvider>
+      <NavigationContainer>
+        <StatusBar style="auto" />
+        <AppNavigator />
+        <BiometricLockScreen />
+        <Toast />
+      </NavigationContainer>
+    </AuthProvider>
+  );
 }

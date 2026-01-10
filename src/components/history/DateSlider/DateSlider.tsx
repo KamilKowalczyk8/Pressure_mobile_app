@@ -5,12 +5,14 @@ import { isSameDay } from 'date-fns';
 import { useDateSlider } from '../../../hooks/history/useDateSlider';
 import { DateTile } from './DateTile';
 import { DatePickerButton } from './DatePickerButton';
+import { useTranslation } from 'react-i18next';
 
 interface DateSliderProps {
   initialDate?: Date;
   onDateChange: (date: Date) => void;
 }
 export const DateSlider = ({ initialDate = new Date(), onDateChange }: DateSliderProps) => {
+  const { t } = useTranslation();
   
   const { 
     daysToRender, 
@@ -68,7 +70,7 @@ export const DateSlider = ({ initialDate = new Date(), onDateChange }: DateSlide
                 }
               `}
             >
-              Dzisiaj
+              {t('today')}
             </Text>
           </TouchableOpacity>
         </View>

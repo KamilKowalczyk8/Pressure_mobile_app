@@ -1,29 +1,38 @@
-interface MeasurementData {
+export interface ReportMeasurement {
   id: number;
   systolic: number;
   diastolic: number;
   pulse: number;
-  createdAt: string; 
+  date: string; 
+  time: string; 
 }
 
-export const generateReportHtml = (measurements: MeasurementData[]) => {
+export interface ReportLabels {
+  title: string;
+  generatedBy: string;
+  headerTime: string;
+  headerPressure: string;
+  headerPulse: string;
+  footer: string;
+}
+
+export const generateReportHtml = (measurements: ReportMeasurement[], labels: ReportLabels) => {
   let rows = '';
   let lastDate = '';
     
   measurements.forEach(m => {
+    const currentDate = m.date;
+    const currentTime = m.time;
 
-  const currentDate = m.createdAt.split(' ')[0];
-  const currentTime = m.createdAt.split(' ')[1];
-
-  if (currentDate !== lastDate) {
-    rows += `
-    <tr class="day-header-row">
+    if (currentDate !== lastDate) {
+      rows += `
+      <tr class="day-header-row">
           <td colspan="3" class="day-header">📅 ${currentDate}</td>
-    </tr>
-    `;
-    lastDate = currentDate;
-  }
-  rows += `
+      </tr>
+      `;
+      lastDate = currentDate;
+    }
+    rows += `
       <tr>
         <td>${currentTime}</td>
         <td><strong>${m.systolic}/${m.diastolic}</strong></td>
@@ -55,14 +64,14 @@ export const generateReportHtml = (measurements: MeasurementData[]) => {
         </style>
       </head>
       <body>
-        <h1>Raport Ciśnienia</h1>
-        <p>Wygenerowano z aplikacji PressureApp</p>
+        <h1>${labels.title}</h1>
+        <p>${labels.generatedBy}</p>
         
         <table>
           <tr>
-            <th>Godzina</th>
-            <th>Ciśnienie (mmHg)</th>
-            <th>Puls (BPM)</th>
+            <th>${labels.headerTime}</th>
+            <th>${labels.headerPressure}</th>
+            <th>${labels.headerPulse}</th>
           </tr>
           <tbody>
             ${rows}
@@ -70,7 +79,7 @@ export const generateReportHtml = (measurements: MeasurementData[]) => {
         </table>
 
         <div class="footer">
-          Dbaj o swoje serce każdego dnia ❤️
+          ${labels.footer}
         </div>
       </body>
     </html>

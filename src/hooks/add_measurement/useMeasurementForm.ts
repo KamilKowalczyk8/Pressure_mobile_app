@@ -4,6 +4,7 @@ import { validateMeasurement } from '../../utils/validators/measurementValidator
 import { MeasurementFormData } from '../../types/forms';
 import { ScannedMeasurement } from '../../services/ocrService';
 import Toast from 'react-native-toast-message';
+import { useTranslation } from 'react-i18next';
 
 export type FormErrors = {
   systolic?: string;
@@ -11,11 +12,15 @@ export type FormErrors = {
   pulse?: string;
   note?: string;
 };
+
 export const useMeasurementForm = (onSubmit: (data: MeasurementFormData) => void) => {
+  const { t } = useTranslation();
   const [systolic, setSystolic] = useState('');
   const [diastolic, setDiastolic] = useState('');
   const [pulse, setPulse] = useState('');
+  
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>('Rano'); 
+  
   const [note, setNote] = useState('');
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -52,8 +57,8 @@ export const useMeasurementForm = (onSubmit: (data: MeasurementFormData) => void
     if (!validationResult.isValid) {
       Toast.show({
         type: 'error', 
-        text1: 'Błąd walidacji',
-        text2: 'Popraw zaznaczone pola przed zapisem.',
+        text1: t('errors.validation_error_title'),
+        text2: t('errors.validation_error_msg'),
         topOffset: 60,
       });
       return; 

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 import { AppState } from 'react-native';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { getBiometricPreference, setBiometricPreference } from '../services/settingsStorage';
+import { useTranslation } from 'react-i18next';
 
 interface AuthContextType {
   isLocked: boolean;
@@ -16,6 +17,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isBiometricsEnabled, setIsBiometricsEnabled] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const [isAuthLoading, setIsAuthLoading] = useState(true); 
+  const { t } = useTranslation();
 
   const appState = useRef(AppState.currentState);
 
@@ -43,7 +45,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (!hasHardware) return;
 
     const result = await LocalAuthentication.authenticateAsync({
-      promptMessage: 'Odblokuj PressureApp',
+      promptMessage: t('auth.unlock_prompt'),
       disableDeviceFallback: false,
     });
 
@@ -55,7 +57,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const toggleBiometrics = async (value: boolean): Promise<boolean> => {
     if (value) {
       const result = await LocalAuthentication.authenticateAsync({
-        promptMessage: 'Potwierdź, aby włączyć blokadę',
+        promptMessage: t('auth.enable_prompt'),
       });
       if (!result.success) return false;
     }

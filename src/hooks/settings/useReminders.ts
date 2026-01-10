@@ -3,10 +3,12 @@ import { Platform } from 'react-native';
 import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import Toast from 'react-native-toast-message'; 
 import { scheduleReminder, cancelAllReminders } from '../../services/NotificationService';
+import { useTranslation } from 'react-i18next';
 
 export const useReminders = () => {
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
+  const { t } = useTranslation();
 
   const openPicker = () => {
     setShowPicker(true);
@@ -30,16 +32,16 @@ export const useReminders = () => {
     try {
       await cancelAllReminders();
       await scheduleReminder(
-        "Czas na pomiar! 🩺",
-        "Zadbaj o swoje serce. Zmierz ciśnienie i zapisz wynik.",
+        t('notification.title'),
+        t('notification.body'),
         hour,
         minute
       );
 
       Toast.show({
         type: 'success', 
-        text1: 'Przypomnienie ustawione! ⏰',
-        text2: `Będę Ci przypominać codziennie o ${timeString}`,
+        text1: t('reminders.success_title'),
+        text2: t('reminders.success_msg', { time: timeString }),
         visibilityTime: 4000, 
         topOffset: 60, 
       });
@@ -49,8 +51,8 @@ export const useReminders = () => {
       
       Toast.show({
         type: 'error', 
-        text1: 'Błąd zapisu',
-        text2: 'Nie udało się ustawić powiadomienia.',
+        text1: t('reminders.error_title'),
+        text2: t('reminders.error_msg'),
       });
     }
   };

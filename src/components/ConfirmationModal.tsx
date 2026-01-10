@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Modal, TouchableOpacity } from 'react-native';
 import { AlertTriangle } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 
 interface ConfirmationModalProps {
   visible: boolean;
@@ -18,9 +19,13 @@ export const ConfirmationModal = ({
   onConfirm,
   title,
   message,
-  confirmText = "Potwierdź",
+  confirmText,
   isDestructive = false
 }: ConfirmationModalProps) => {
+  const { t } = useTranslation();
+
+  const effectiveConfirmText = confirmText || t('confirm');
+
   return (
     <Modal
       animationType="fade"
@@ -52,7 +57,7 @@ export const ConfirmationModal = ({
               onPress={onClose}
               className="flex-1 py-3 bg-gray-100 rounded-xl items-center active:bg-gray-200"
             >
-              <Text className="text-gray-700 font-semibold">Anuluj</Text>
+              <Text className="text-gray-700 font-semibold">{t('cancel')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
@@ -60,7 +65,7 @@ export const ConfirmationModal = ({
               className={`flex-1 py-3 rounded-xl items-center ${isDestructive ? 'bg-red-500 active:bg-red-600' : 'bg-blue-500 active:bg-blue-600'}`}
             >
               <Text className="text-white font-bold">
-                {confirmText}
+                {effectiveConfirmText}
               </Text>
             </TouchableOpacity>
           </View>

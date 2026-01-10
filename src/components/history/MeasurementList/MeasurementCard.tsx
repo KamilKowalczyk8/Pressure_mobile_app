@@ -1,17 +1,38 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { format } from 'date-fns';
+// IMPORT 1: Lokale dla formatowania czasu (pamiętaj o zainstalowaniu date-fns jeśli nie masz pełnej paczki)
+import { pl, enUS } from 'date-fns/locale';
 import { Heart, Clock, StickyNote, Trash2 } from 'lucide-react-native'; 
 import { Measurement } from '../../../models/Measurement';
+// IMPORT 2: Hook do tłumaczeń
+import { useTranslation } from 'react-i18next';
 
 interface MeasurementCardProps {
   measurement: Measurement;
   onDelete: (id: number) => void;
 }
+
 export const MeasurementCard = ({ measurement, onDelete }: MeasurementCardProps) => {
+  const { t, i18n } = useTranslation();
+  
   const { systolic, diastolic, pulse, createdAt, timeOfDay, note } = measurement;
   const dateObject = new Date(createdAt);
-  const timeString = format(dateObject, 'HH:mm');
+
+  const isEnglish = i18n.language.startsWith('en');
+  
+  const timeFormatString = isEnglish ? 'h:mm aa' : 'HH:mm';
+  const currentLocale = isEnglish ? enUS : pl;
+  
+  const timeString = format(dateObject, timeFormatString, { locale: currentLocale });
+
+  const timeOfDayLabels: Record<string, string> = {
+    'Rano': t('time_of_day_morning'),
+    'Popołudnie': t('time_of_day_afternoon'),
+    'Wieczór': t('time_of_day_evening'),
+  };
+
+  const displayTimeOfDay = timeOfDayLabels[timeOfDay] || timeOfDay;
 
   return (
     <View className="bg-background-paper px-5 py-4 pb-6 rounded-3xl shadow-md border border-border-light mb-4 mx-4">
@@ -25,7 +46,7 @@ export const MeasurementCard = ({ measurement, onDelete }: MeasurementCardProps)
 
           <View className="bg-border-light px-2 py-0.5 rounded-md ml-2">
             <Text className="text-[10px] font-semibold uppercase tracking-wider text-typography-secondary">
-              {timeOfDay}
+              {displayTimeOfDay}
             </Text>
           </View>
         </View>
@@ -38,6 +59,7 @@ export const MeasurementCard = ({ measurement, onDelete }: MeasurementCardProps)
           <Trash2 size={18} color="#DC2626" />
         </TouchableOpacity>
       </View>
+      
       <View className="flex-row justify-between items-end">
         <View className="flex-row items-baseline">
           <Text className="text-4xl font-bold text-typography-main">
